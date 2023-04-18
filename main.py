@@ -1,4 +1,4 @@
-from filters import iir_filter, fourier_transform
+from filters import iir_filter, fourier_transform, fir_filter
 from scipy.signal import freqz
 from numpy import cos, sin, pi, absolute, arange
 import numpy as np
@@ -21,24 +21,51 @@ if __name__ == '__main__':
     plt.plot(ts, x_noise, color="C0", label="Noisy signal (x noise)")
     plt.xlabel("Time / 5")
     plt.ylabel("Amplitude")
-    plt.legend(loc="lower center", bbox_to_anchor= [0.5, 11], ncol=2, fontsize="smaller")
-    plt.tight_layout()
+    plt.legend(loc="lower center", bbox_to_anchor= [0.5, 1], ncol=2, fontsize="smaller")
     plt.show()
 
     # Signal Fourier Transform before filtering
     xf, yf = fourier_transform(x_noise, sample_rate=fs, duration=5)
+    plt.figure (figsize= (12, 5))
     plt.plot (xf, np.abs (yf))
     plt.show()
+
     # define lowpass filter with 2.5 Hz cutoff frequency
     fc = 10
     x_filtered = iir_filter(x_noise, fc, fs)
+
     # Signal Fourier Transform after filtering
-    xf, yf - fourier_transform(x_filtered, sample_rate=fs, duration=5)
+    xf, yf = fourier_transform(x_filtered, sample_rate=fs, duration=5)
+    plt.figure (figsize= (12, 5))
     plt.plot(xf, np.abs (yf))
     plt.show()
+
     plt.figure(figsize= [6.4, 2.4])
     plt.plot(ts, x_noise, label="Raw signal")
     plt.plot(ts, x_filtered, alpha=0.8, lw=3, label="SciPy lfilter")
+    plt.xlabel("Time / s")
+    plt.ylabel("Amplitude")
+    plt.legend(loc="lower center", bbox_to_anchor= [0.5, 1], ncol=2, fontsize="smaller")
+    plt.tight_layout()
+    plt.show()
+
+    # Apply filter foward and backward using filtfilt
+    x_filtered = iir_filter(x_noise, fc, fs, fbf = True)
+    plt.figure(figsize= [6.4, 2.4])
+    plt.plot(ts, x_noise, label="Raw signal")
+    plt.plot(ts, x_filtered, alpha=0.8, lw=3, label="filter forward and backward")
+    plt.xlabel("Time / s")
+    plt.ylabel("Amplitude")
+    plt.legend(loc="lower center", bbox_to_anchor= [0.5, 1], ncol=2, fontsize="smaller")
+    plt.tight_layout()
+    plt.show()
+
+    # Apply filter foward and backward using filtfilt
+    nyq_rate = fs / 2.0
+    x_filtered_fir,_,_ = fir_filter(x_noise, fs, fc)
+    plt.figure(figsize= [6.4, 2.4])
+    plt.plot(ts, x_noise, label="Raw signal")
+    plt.plot(ts, x_filtered, alpha=0.8, lw=3, label="FIR filter")
     plt.xlabel("Time / s")
     plt.ylabel("Amplitude")
     plt.legend(loc="lower center", bbox_to_anchor= [0.5, 1], ncol=2, fontsize="smaller")
