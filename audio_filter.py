@@ -62,9 +62,15 @@ def audio_filter():
     plt.show()
 
     # Filtering working on FFT domain
-    fft_spectrum[5900:6100] = 0
-    fft_spectrum[7900:8100] = 0
-    fft_spectrum[2400:2600] = 0
+    for i, f in enumerate(freq):
+        if f > 5900 and f < 6100:
+            fft_spectrum[i] = 0
+    for i, f in enumerate(freq):
+        if f > 7900 and f < 8100:
+            fft_spectrum[i] = 0
+    for i, f in enumerate(freq):
+        if f > 2400 and f < 2600:
+            fft_spectrum[i] = 0
 
     # Plot FFT
     fft_spectrum_abs = np.abs(fft_spectrum)
